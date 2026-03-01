@@ -4,9 +4,11 @@ import Dashboard from './components/Dashboard';
 import AdmissionForm from './components/AdmissionForm';
 import ClinicalModule from './components/ClinicalModule';
 import Registry from './components/Registry';
+import DischargeForm from './components/DischargeForm';
 
 function App() {
   const [view, setView] = useState('dashboard');
+  const [selectedPatient, setSelectedPatient] = useState(null); // For discharge process
   const [patients, setPatients] = useState([
     { 
         id: 1, 
@@ -15,7 +17,8 @@ function App() {
         weeks: "34", 
         status: "Observation", 
         room: "Ward-01", 
-        history: [{ bp: "120/80", fhr: "145", diagnosis: "Routine Checkup", treatment: "Iron Supplements" }] 
+        history: [{ bp: "120/80", fhr: "145", diagnosis: "Routine Checkup", treatment: "Iron" }],
+        isDischarged: false
     }
   ]);
 
@@ -39,6 +42,16 @@ function App() {
     setView('registry');
   };
 
+  const processDischarge = (id, summary) => {
+    setPatients(patients.map(p => {
+      if (p.id === id) {
+        return { ...p, isDischarged: true, dischargeSummary: summary, dischargeDate: new Date().toLocaleDateString() };
+      }
+      return p;
+    }));
+    setView('registry');
+  };
+
   return (
     <div className="app-container">
       <nav className="sidebar">
@@ -50,10 +63,17 @@ function App() {
       </nav>
 
       <main className="content">
-        {view === 'dashboard' && <Dashboard patients={patients} updateStatus={updateStatus} />}
+        {view === 'dashboard' && (
+            <Dashboard 
+                patients={patients.filter(p => !p.isDischarged)} 
+                updateStatus={updateStatus} 
+                onDischargeClick={(p) => { setSelectedPatient(p); setView('discharge-form'); }}
+            />
+        )}
         {view === 'admissions' && <AdmissionForm addPatient={addPatient} />}
-        {view === 'clinical' && <ClinicalModule patients={patients} addMedicalRecord={addMedicalRecord} />}
+        {view === 'clinical' && <ClinicalModule patients={patients.filter(p => !p.isDischarged)} addMedicalRecord={addMedicalRecord} />}
         {view === 'registry' && <Registry patients={patients} />}
+        {view === 'discharge-form' && <DischargeForm patient={selectedPatient} onConfirm={processDischarge} onCancel={() => setView('dashboard')} />}
       </main>
     </div>
   );
