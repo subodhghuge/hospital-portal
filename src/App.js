@@ -2,95 +2,104 @@ import React, { useState } from 'react';
 import './styles.css';
 
 function App() {
+  const [view, setView] = useState('admissions'); 
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  // The Central Database
   const [patients, setPatients] = useState([
-    { id: 1, name: "Sarah Jenkins", aadhar: "5544-2233-1100", weeks: "38", status: "Labor", room: "D-01" },
+    { id: 1, name: "Anita Rao", aadhar: "9988-7766-5544", weeks: "36", status: "Observation", room: "W-01" }
   ]);
 
-  const [view, setView] = useState('dashboard'); // Toggle between Dashboard and Registry
   const [formData, setFormData] = useState({ name: '', aadhar: '', weeks: '', status: 'Observation' });
 
+  // Quick Admit Function
   const handleAdmit = (e) => {
     e.preventDefault();
     if (formData.aadhar.length !== 12) {
-      alert("Please enter a valid 12-digit Aadhar Number");
+      alert("Error: Aadhar must be 12 digits.");
       return;
     }
     const newPatient = {
       ...formData,
       id: Date.now(),
-      room: "Assigning...",
-      // Formatting Aadhar for display: XXXX-XXXX-XXXX
+      room: "TBD",
+      // Format Aadhar for the Registry
       aadhar: formData.aadhar.replace(/(\d{4})(\d{4})(\d{4})/, '$1-$2-$3')
     };
-    setPatients([...patients, newPatient]);
+    setPatients([newPatient, ...patients]);
     setFormData({ name: '', aadhar: '', weeks: '', status: 'Observation' });
-    alert("Patient Admitted to Registry Successfully!");
+    alert(`Success: ${newPatient.name} added to Registry!`);
+    setView('registry'); // Automatically jump to registry to show the link worked
   };
+
+  // Filter Registry by Aadhar or Name
+  const filteredPatients = patients.filter(p => 
+    p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    p.aadhar.includes(searchTerm)
+  );
 
   return (
     <div className="app-layout">
-      <aside className="sidebar">
-        <h2>MATERNITY OS</h2>
-        <div className={`nav-item ${view === 'dashboard' ? 'active' : ''}`} onClick={() => setView('dashboard')}>📊 Live Dashboard</div>
-        <div className={`nav-item ${view === 'registry' ? 'active' : ''}`} onClick={() => setView('registry')}>👩‍🍼 Patient Registry</div>
-        <div className="nav-item">📅 Appointments</div>
-      </aside>
+      <nav className="sidebar">
+        <div className="logo">🏥 MATERNITY HUB</div>
+        <div className={`nav-link ${view === 'admissions' ? 'active' : ''}`} onClick={() => setView('admissions')}>🆕 Quick Admit</div>
+        <div className={`nav-link ${view === 'registry' ? 'active' : ''}`} onClick={() => setView('registry')}>📂 Patient Registry</div>
+        <div className="nav-link">📉 Occupancy Report</div>
+      </nav>
 
       <main className="main-content">
-        {view === 'dashboard' ? (
-          <>
-            <header>
-              <h1>Quick Admission Desk</h1>
-              <p>Secure Mother & Child Registration</p>
-            </header>
-
-            <div className="admission-form-container">
-              <form onSubmit={handleAdmit} className="admit-form">
-                <div className="form-group">
-                  <label>Full Name (As per Aadhar)</label>
-                  <input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="e.g. Sunita Sharma" />
+        {view === 'admissions' ? (
+          <section className="fade-in">
+            <h1>Admission Desk</h1>
+            <div className="card">
+              <form onSubmit={handleAdmit}>
+                <div className="input-group">
+                  <label>Mother's Full Name</label>
+                  <input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
                 </div>
-                <div className="form-group">
+                <div className="input-group">
                   <label>Aadhar Card Number (12 Digits)</label>
-                  <input required type="number" value={formData.aadhar} onChange={e => setFormData({...formData, aadhar: e.target.value})} placeholder="0000 0000 0000" />
+                  <input required type="text" maxLength="12" value={formData.aadhar} onChange={e => setFormData({...formData, aadhar: e.target.value})} />
                 </div>
-                <div className="form-group">
-                  <label>Current Pregnancy Week</label>
-                  <input required type="number" value={formData.weeks} onChange={e => setFormData({...formData, weeks: e.target.value})} placeholder="e.g. 36" />
+                <div className="input-group">
+                  <label>Pregnancy Week</label>
+                  <input required type="number" value={formData.weeks} onChange={e => setFormData({...formData, weeks: e.target.value})} />
                 </div>
-                <button type="submit" className="btn-primary">Confirm Admission</button>
+                <button type="submit" className="primary-btn">Complete Admission</button>
               </form>
             </div>
-          </>
+          </section>
         ) : (
-          <>
-            <header>
-              <h1>Patient Registry</h1>
-              <p>Historical Records & Active Admissions</p>
-            </header>
-            <table className="data-table">
+          <section className="fade-in">
+            <h1>Patient Registry</h1>
+            <div className="search-bar">
+              <input 
+                placeholder="Search by Aadhar or Name..." 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <table className="registry-table">
               <thead>
                 <tr>
                   <th>Aadhar ID</th>
-                  <th>Mother's Name</th>
-                  <th>Term</th>
+                  <th>Patient Name</th>
                   <th>Status</th>
-                  <th>Actions</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
-                {patients.map(p => (
+                {filteredPatients.map(p => (
                   <tr key={p.id}>
                     <td><code>{p.aadhar}</code></td>
-                    <td><strong>{p.name}</strong></td>
-                    <td>{p.weeks} Wks</td>
-                    <td><span className={`status-pill ${p.status}`}>{p.status}</span></td>
-                    <td><button className="btn-outline">View Details</button></td>
+                    <td>{p.name}</td>
+                    <td><span className={`pill ${p.status}`}>{p.status}</span></td>
+                    <td><button className="view-btn">View Record</button></td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </>
+          </section>
         )}
       </main>
     </div>
