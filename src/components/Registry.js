@@ -5,21 +5,34 @@ const Registry = ({ patients }) => {
   const filtered = patients.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.aadhar.includes(search));
 
   return (
-    <div>
-      <h1>Patient Registry</h1>
-      <input className="card" placeholder="Search by Name or Aadhar..." onChange={e => setSearch(e.target.value)} style={{width: '100%'}} />
+    <div className="fade-in">
+      <header><h1>Patient Registry</h1></header>
+      <div className="form-group">
+        <input className="card" style={{width: '95%'}} placeholder="Search Aadhar or Name..." onChange={e => setSearch(e.target.value)} />
+      </div>
       <div className="card">
         <table>
           <thead>
-            <tr><th>Aadhar ID</th><th>Patient Name</th><th>Admitted On</th></tr>
+            <tr>
+              <th>Aadhar</th>
+              <th>Mother's Name</th>
+              <th>Latest Diagnosis</th>
+              <th>Records</th>
+            </tr>
           </thead>
           <tbody>
             {filtered.map(p => (
               <tr key={p.id}>
                 <td><code>{p.aadhar}</code></td>
-                <td>{p.name}</td>
-                <td>{new Date(p.id).toLocaleDateString()}</td>
-                <td>{p.history ? (<small>Last: {p.history[p.history.length-1].diagnosis}</small>) : "No records yet"}</td>
+                <td><strong>{p.name}</strong></td>
+                <td>
+                  {p.history && p.history.length > 0 ? (
+                    <span style={{color: '#0ea5e9'}}>🩺 {p.history[p.history.length-1].diagnosis}</span>
+                  ) : (
+                    <span style={{color: '#94a3b8'}}>New Admission</span>
+                  )}
+                </td>
+                <td>{p.history ? p.history.length : 0} Visit(s)</td>
               </tr>
             ))}
           </tbody>
@@ -28,4 +41,5 @@ const Registry = ({ patients }) => {
     </div>
   );
 };
+
 export default Registry;
