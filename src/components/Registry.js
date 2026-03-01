@@ -19,6 +19,7 @@ const Registry = ({ patients }) => {
                 <td><code>{p.aadhar}</code></td>
                 <td>{p.name}</td>
                 <td>{new Date(p.id).toLocaleDateString()}</td>
+                <td>{p.history ? (<small>Last: {p.history[p.history.length-1].diagnosis}</small>) : "No records yet"}</td>
               </tr>
             ))}
           </tbody>

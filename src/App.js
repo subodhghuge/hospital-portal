@@ -1,39 +1,20 @@
-import React, { useState } from 'react';
-import './styles.css';
-import AdmissionForm from './components/AdmissionForm';
-import Dashboard from './components/Dashboard';
-import Registry from './components/Registry';
+// Add these to your App.js imports
+import ClinicalModule from './components/ClinicalModule';
 
-function App() {
-  const [view, setView] = useState('dashboard');
-  const [patients, setPatients] = useState([
-    { id: 1, name: "Anita Rao", aadhar: "9988-7766-5544", weeks: "36", status: "Observation", room: "W-01" }
-  ]);
+// Inside your App function, add this function:
+const addMedicalRecord = (id, record) => {
+  setPatients(patients.map(p => {
+    if (p.id === parseInt(id)) {
+      // Create a 'history' array if it doesn't exist and add the record
+      const history = p.history ? [...p.history, record] : [record];
+      return { ...p, history, lastCheckup: new Date().toLocaleDateString() };
+    }
+    return p;
+  }));
+};
 
-  const addPatient = (newPatient) => {
-    setPatients([newPatient, ...patients]);
-    setView('dashboard'); // Go to dashboard after admission
-  };
+// Add a new nav-btn in the Sidebar:
+<div className={`nav-btn ${view === 'clinical' ? 'active' : ''}`} onClick={() => setView('clinical')}>🩺 Clinical/Treatment</div>
 
-  const updateStatus = (id, newStatus) => {
-    setPatients(patients.map(p => p.id === id ? {...p, status: newStatus} : p));
-  };
-
-  return (
-    <div className="app-container">
-      <aside className="sidebar">
-        <h2>MATERNITY OS</h2>
-        <div className={`nav-btn ${view === 'dashboard' ? 'active' : ''}`} onClick={() => setView('dashboard')}>📊 Dashboard</div>
-        <div className={`nav-btn ${view === 'admissions' ? 'active' : ''}`} onClick={() => setView('admissions')}>🆕 Admission</div>
-        <div className={`nav-btn ${view === 'registry' ? 'active' : ''}`} onClick={() => setView('registry')}>📂 Registry</div>
-      </aside>
-
-      <main className="content">
-        {view === 'dashboard' && <Dashboard patients={patients} updateStatus={updateStatus} />}
-        {view === 'admissions' && <AdmissionForm addPatient={addPatient} />}
-        {view === 'registry' && <Registry patients={patients} />}
-      </main>
-    </div>
-  );
-}
-export default App;
+// Update the main content logic:
+{view === 'clinical' && <ClinicalModule patients={patients} addMedicalRecord={addMedicalRecord} />}
