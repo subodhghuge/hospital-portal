@@ -2,90 +2,96 @@ import React, { useState } from 'react';
 import './styles.css';
 
 function App() {
-  // Initial Demo Data
   const [patients, setPatients] = useState([
-    { id: 1, name: "Sarah Jenkins", weeks: "38", status: "Labor", room: "D-01" },
-    { id: 2, name: "Priya Gupta", weeks: "32", status: "Observation", room: "W-12" },
-    { id: 3, name: "Elena Rodriguez", weeks: "40", status: "Post-Natal", room: "W-05" }
+    { id: 1, name: "Sarah Jenkins", aadhar: "5544-2233-1100", weeks: "38", status: "Labor", room: "D-01" },
   ]);
 
-  const [newName, setNewName] = useState("");
+  const [view, setView] = useState('dashboard'); // Toggle between Dashboard and Registry
+  const [formData, setFormData] = useState({ name: '', aadhar: '', weeks: '', status: 'Observation' });
 
-  // Function to Admit New Patient
-  const addPatient = () => {
-    if (!newName) return;
-    const newEntry = {
+  const handleAdmit = (e) => {
+    e.preventDefault();
+    if (formData.aadhar.length !== 12) {
+      alert("Please enter a valid 12-digit Aadhar Number");
+      return;
+    }
+    const newPatient = {
+      ...formData,
       id: Date.now(),
-      name: newName,
-      weeks: "TBD",
-      status: "Observation",
-      room: "TBD"
+      room: "Assigning...",
+      // Formatting Aadhar for display: XXXX-XXXX-XXXX
+      aadhar: formData.aadhar.replace(/(\d{4})(\d{4})(\d{4})/, '$1-$2-$3')
     };
-    setPatients([...patients, newEntry]);
-    setNewName("");
-  };
-
-  // Function to Discharge
-  const discharge = (id) => {
-    setPatients(patients.filter(p => p.id !== id));
+    setPatients([...patients, newPatient]);
+    setFormData({ name: '', aadhar: '', weeks: '', status: 'Observation' });
+    alert("Patient Admitted to Registry Successfully!");
   };
 
   return (
     <div className="app-layout">
       <aside className="sidebar">
-        <h2>MATERNITY HOME OS</h2>
-        <div className="nav-item">📊 Dashboard</div>
-        <div className="nav-item">👩‍🍼 Patient Registry</div>
+        <h2>MATERNITY OS</h2>
+        <div className={`nav-item ${view === 'dashboard' ? 'active' : ''}`} onClick={() => setView('dashboard')}>📊 Live Dashboard</div>
+        <div className={`nav-item ${view === 'registry' ? 'active' : ''}`} onClick={() => setView('registry')}>👩‍🍼 Patient Registry</div>
         <div className="nav-item">📅 Appointments</div>
-        <div className="nav-item">💊 Inventory</div>
       </aside>
 
       <main className="main-content">
-        <header>
-          <h1>Maternity Command Center</h1>
-          <p>Real-time Facility Overview</p>
-        </header>
+        {view === 'dashboard' ? (
+          <>
+            <header>
+              <h1>Quick Admission Desk</h1>
+              <p>Secure Mother & Child Registration</p>
+            </header>
 
-        <div className="stats-bar">
-          <div className="stat-card"><h3>Total Admissions</h3><p>{patients.length}</p></div>
-          <div className="stat-card"><h3>In Labor</h3><p>{patients.filter(p => p.status === 'Labor').length}</p></div>
-          <div className="stat-card"><h3>Available Beds</h3><p>{20 - patients.length}</p></div>
-          <div className="stat-card"><h3>Critical Alerts</h3><p style={{color: 'red'}}>0</p></div>
-        </div>
-
-        <div className="action-bar">
-          <input 
-            placeholder="Enter Mother's Full Name to Admit..." 
-            value={newName} 
-            onChange={(e) => setNewName(e.target.value)}
-          />
-          <button className="btn-add" onClick={addPatient}>+ Quick Admit</button>
-        </div>
-
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Patient Name</th>
-              <th>Term</th>
-              <th>Current Status</th>
-              <th>Room</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {patients.map(p => (
-              <tr key={p.id}>
-                <td><strong>{p.name}</strong></td>
-                <td>{p.weeks} Weeks</td>
-                <td><span className={`status-pill ${p.status}`}>{p.status}</span></td>
-                <td>{p.room}</td>
-                <td>
-                  <button className="btn-discharge" onClick={() => discharge(p.id)}>Discharge</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+            <div className="admission-form-container">
+              <form onSubmit={handleAdmit} className="admit-form">
+                <div className="form-group">
+                  <label>Full Name (As per Aadhar)</label>
+                  <input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="e.g. Sunita Sharma" />
+                </div>
+                <div className="form-group">
+                  <label>Aadhar Card Number (12 Digits)</label>
+                  <input required type="number" value={formData.aadhar} onChange={e => setFormData({...formData, aadhar: e.target.value})} placeholder="0000 0000 0000" />
+                </div>
+                <div className="form-group">
+                  <label>Current Pregnancy Week</label>
+                  <input required type="number" value={formData.weeks} onChange={e => setFormData({...formData, weeks: e.target.value})} placeholder="e.g. 36" />
+                </div>
+                <button type="submit" className="btn-primary">Confirm Admission</button>
+              </form>
+            </div>
+          </>
+        ) : (
+          <>
+            <header>
+              <h1>Patient Registry</h1>
+              <p>Historical Records & Active Admissions</p>
+            </header>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Aadhar ID</th>
+                  <th>Mother's Name</th>
+                  <th>Term</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {patients.map(p => (
+                  <tr key={p.id}>
+                    <td><code>{p.aadhar}</code></td>
+                    <td><strong>{p.name}</strong></td>
+                    <td>{p.weeks} Wks</td>
+                    <td><span className={`status-pill ${p.status}`}>{p.status}</span></td>
+                    <td><button className="btn-outline">View Details</button></td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
+        )}
       </main>
     </div>
   );
