@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './Styles.css';
+import './styles.css';
 import Dashboard from './components/Dashboard';
 import AdmissionForm from './components/AdmissionForm';
 import ClinicalModule from './components/ClinicalModule';
@@ -8,7 +8,9 @@ import DischargeForm from './components/DischargeForm';
 
 function App() {
   const [view, setView] = useState('dashboard');
-  const [selectedPatient, setSelectedPatient] = useState(null); // For discharge process
+  const [searchTerm, setSearchTerm] = useState(''); // Added Search State
+  const [selectedPatient, setSelectedPatient] = useState(null);
+  
   const [patients, setPatients] = useState([
     { 
         id: 1, 
@@ -19,7 +21,7 @@ function App() {
         room: "Ward-01", 
         history: [{ bp: "120/80", fhr: "145", diagnosis: "Routine Checkup", treatment: "Iron" }],
         isDischarged: false
-    }, // <-- Make sure there is a comma here
+    },
     { 
         id: 2, 
         name: "Priya Sharma", 
@@ -41,6 +43,13 @@ function App() {
         isDischarged: false
     }
   ]);
+
+  // RESTORED: This was the missing function
+  const addPatient = (newPatient) => {
+    setPatients([newPatient, ...patients]);
+    setView('dashboard');
+  };
+
   const updateStatus = (id, newStatus) => {
     setPatients(patients.map(p => p.id === id ? { ...p, status: newStatus } : p));
   };
@@ -66,6 +75,13 @@ function App() {
     setView('registry');
   };
 
+  // Logic to filter the list based on Search Bar
+  const filteredPatients = patients.filter(p => 
+    !p.isDischarged && 
+    (p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+     p.aadhar.includes(searchTerm))
+  );
+
   return (
     <div className="app-container">
       <nav className="sidebar">
@@ -78,11 +94,25 @@ function App() {
 
       <main className="content">
         {view === 'dashboard' && (
+          <div className="fade-in">
+            <header>
+              <h1>Live Ward Monitor</h1>
+              <div className="search-container" style={{ marginTop: '20px' }}>
+                <input 
+                  type="text" 
+                  placeholder="🔍 Search Name or Aadhar..." 
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="search-input"
+                />
+              </div>
+            </header>
             <Dashboard 
-                patients={patients.filter(p => !p.isDischarged)} 
+                patients={filteredPatients} 
                 updateStatus={updateStatus} 
                 onDischargeClick={(p) => { setSelectedPatient(p); setView('discharge-form'); }}
             />
+          </div>
         )}
         {view === 'admissions' && <AdmissionForm addPatient={addPatient} />}
         {view === 'clinical' && <ClinicalModule patients={patients.filter(p => !p.isDischarged)} addMedicalRecord={addMedicalRecord} />}
