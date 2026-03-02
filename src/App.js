@@ -12,41 +12,35 @@ function App() {
   const [patients, setPatients] = useState([
     { 
         id: 1, 
-        name: "Sunita Verma", 
+        name: "Navneet Shah", 
         aadhar: "4455-6677-8899", 
         weeks: "34", 
         status: "Observation", 
         room: "Ward-01", 
         history: [{ bp: "120/80", fhr: "145", diagnosis: "Routine Checkup", treatment: "Iron" }],
         isDischarged: false
-    }
-        { 
-        id: 1, 
-        name: "Navneet Shah", 
-        aadhar: "4455-6677-8899", 
-        weeks: "43", 
-        status: "Observation", 
-        room: "Ward-02", 
-        history: [{ bp: "120/80", fhr: "145", diagnosis: "Routine Checkup", treatment: "Iron" }],
+    }, // <-- Make sure there is a comma here
+    { 
+        id: 2, 
+        name: "Priya Sharma", 
+        aadhar: "1122-3344-5566", 
+        weeks: "38", 
+        status: "Labor", 
+        room: "LDR-02", 
+        history: [{ bp: "135/90", fhr: "155", diagnosis: "Active Labor", treatment: "IV Fluids" }],
         isDischarged: false
-    }
-        { 
-        id: 1, 
-        name: "Payal Shinde", 
-        aadhar: "4455-6677-8899", 
-        weeks: "20", 
-        status: "Observation", 
-        room: "Ward-03", 
-        history: [{ bp: "120/80", fhr: "145", diagnosis: "Routine Checkup", treatment: "Iron" }],
+    },
+    { 
+        id: 3, 
+        name: "Anjali Gupta", 
+        aadhar: "9988-7766-5544", 
+        weeks: "36", 
+        status: "Post-Natal", 
+        room: "Recovery-05", 
+        history: [{ bp: "110/70", fhr: "N/A", diagnosis: "Stable", treatment: "Rest" }],
         isDischarged: false
     }
   ]);
-
-  const addPatient = (newPatient) => {
-    setPatients([newPatient, ...patients]);
-    setView('dashboard');
-  };
-
   const updateStatus = (id, newStatus) => {
     setPatients(patients.map(p => p.id === id ? { ...p, status: newStatus } : p));
   };
