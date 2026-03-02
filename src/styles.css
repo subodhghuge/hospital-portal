@@ -1,10 +1,9 @@
-/* Safari & Mobile Optimized Maternity OS */
+/* Safari & Mobile Optimized - No Overlap Version */
 :root {
   --sidebar-width: 260px;
   --primary-blue: #0ea5e9;
   --dark-navy: #0f172a;
   --bg-slate: #f1f5f9;
-  --white: #ffffff;
 }
 
 * {
@@ -13,56 +12,39 @@
   padding: 0;
 }
 
-/* Fix for Safari Height Issues */
-html, body, #root, .app-container {
-  height: 100%;
-  min-height: -webkit-fill-available;
-  background-color: var(--dark-navy); /* Prevents white flashes on scroll */
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  overflow: hidden; /* Prevents double scrollbars */
-}
-
-/* The Safari-Safe Flex Layout */
+/* Base Layout */
 .app-container {
   display: flex;
-  flex-direction: row;
-  width: 100vw;
-  overflow: hidden;
+  min-height: 100vh;
+  background-color: var(--bg-slate);
 }
 
-/* Sidebar: Using Flex instead of Fixed for Mobile Stability */
+/* Sidebar - Desktop Mode */
 .sidebar {
   width: var(--sidebar-width);
   background-color: var(--dark-navy);
   color: white;
+  padding: 20px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  padding: 20px 15px;
-  flex-shrink: 0;
-  overflow-y: auto;
 }
 
 .sidebar h2 {
   font-size: 1.1rem;
   color: #38bdf8;
+  margin-bottom: 25px;
   text-align: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #334155;
 }
 
 .nav-btn {
-  padding: 14px;
-  margin-bottom: 8px;
+  padding: 12px 15px;
+  margin-bottom: 10px;
   cursor: pointer;
-  border-radius: 12px;
+  border-radius: 8px;
   color: #94a3b8;
-  font-size: 0.9rem;
   font-weight: 600;
-  -webkit-tap-highlight-color: transparent; /* Fixes grey box on iPhone tap */
+  transition: 0.2s;
 }
 
 .nav-btn.active {
@@ -70,69 +52,49 @@ body {
   color: white;
 }
 
-/* Content Area: Independent Scroll for Safari */
+/* Content - Desktop Mode */
 .content {
   flex-grow: 1;
-  background-color: var(--bg-slate);
-  padding: 20px;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iPhone */
+  padding: 30px;
 }
 
-header h1 {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: var(--dark-navy);
-  margin-bottom: 1rem;
-}
-
-/* Responsive Search Bar */
-.search-input {
-  width: 100%;
-  padding: 12px;
-  border: 2px solid #cbd5e1;
-  border-radius: 12px;
-  font-size: 16px; /* Prevents iPhone "Auto-Zoom" on input focus */
-  appearance: none;
-}
-
-/* Card Styling */
-.card {
-  background: white;
-  border-radius: 16px;
-  padding: 16px;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-  margin-bottom: 20px;
-  overflow-x: auto; /* Handles tables on small screens */
-}
-
-/* Status Pills */
-.pill {
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.7rem;
-  font-weight: 800;
-  color: white;
-  text-transform: uppercase;
-}
-
-.Observation { background: #f59e0b; }
-.Labor { background: #ef4444; }
-.Post-Natal { background: #22c55e; }
-
-/* Mobile View Overrides */
+/* --- THE IPHONE REPAIR (Media Query) --- */
 @media (max-width: 768px) {
   .app-container {
-    flex-direction: column; /* Stacks sidebar on top of content for phones */
+    flex-direction: column; /* Stacks sidebar ON TOP of content */
   }
+
   .sidebar {
-    width: 100%;
+    width: 100%; /* Sidebar takes full width at top */
     height: auto;
     padding: 10px;
+    position: relative; /* Ensures it doesn't float over content */
   }
-  .sidebar h2 { margin-bottom: 10px; }
+
+  .sidebar h2 {
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+  }
+
+  /* Makes menu buttons scrollable horizontally on iPhone */
+  .sidebar .nav-btns-wrapper {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding-bottom: 5px;
+  }
+
+  .nav-btn {
+    flex-shrink: 0;
+    margin-bottom: 0;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    white-space: nowrap; /* Prevents text wrapping */
+  }
+
   .content {
-    margin-left: 0;
     padding: 15px;
+    width: 100%; /* Content now has 100% of the screen width */
+    margin-left: 0;
   }
 }
