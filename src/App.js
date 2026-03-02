@@ -20,6 +20,26 @@ function App() {
         history: [{ bp: "120/80", fhr: "145", diagnosis: "Routine Checkup", treatment: "Iron" }],
         isDischarged: false
     }
+        { 
+        id: 1, 
+        name: "Navneet Shah", 
+        aadhar: "4455-6677-8899", 
+        weeks: "43", 
+        status: "Observation", 
+        room: "Ward-02", 
+        history: [{ bp: "120/80", fhr: "145", diagnosis: "Routine Checkup", treatment: "Iron" }],
+        isDischarged: false
+    }
+        { 
+        id: 1, 
+        name: "Payal Shinde", 
+        aadhar: "4455-6677-8899", 
+        weeks: "20", 
+        status: "Observation", 
+        room: "Ward-03", 
+        history: [{ bp: "120/80", fhr: "145", diagnosis: "Routine Checkup", treatment: "Iron" }],
+        isDischarged: false
+    }
   ]);
 
   const addPatient = (newPatient) => {
