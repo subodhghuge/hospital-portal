@@ -1,13 +1,10 @@
-/* Maternity OS - Professional Medical Theme */
+/* Safari & Mobile Optimized Maternity OS */
 :root {
   --sidebar-width: 260px;
   --primary-blue: #0ea5e9;
   --dark-navy: #0f172a;
-  --bg-slate: #f8fafc;
+  --bg-slate: #f1f5f9;
   --white: #ffffff;
-  --border-color: #e2e8f0;
-  --text-main: #1e293b;
-  --text-muted: #64748b;
 }
 
 * {
@@ -16,198 +13,126 @@
   padding: 0;
 }
 
-body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: var(--bg-slate);
-  color: var(--text-main);
-  line-height: 1.5;
+/* Fix for Safari Height Issues */
+html, body, #root, .app-container {
+  height: 100%;
+  min-height: -webkit-fill-available;
+  background-color: var(--dark-navy); /* Prevents white flashes on scroll */
 }
 
-/* Layout Structure */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  overflow: hidden; /* Prevents double scrollbars */
+}
+
+/* The Safari-Safe Flex Layout */
 .app-container {
   display: flex;
+  flex-direction: row;
+  width: 100vw;
+  overflow: hidden;
 }
 
-/* Sidebar Styling */
+/* Sidebar: Using Flex instead of Fixed for Mobile Stability */
 .sidebar {
   width: var(--sidebar-width);
   background-color: var(--dark-navy);
   color: white;
-  height: 100vh;
-  position: fixed;
-  left: 0;
-  top: 0;
-  padding: 2rem 1.25rem;
-  z-index: 100;
-  box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 15px;
+  flex-shrink: 0;
+  overflow-y: auto;
 }
 
 .sidebar h2 {
-  font-size: 1.2rem;
-  font-weight: 800;
-  letter-spacing: 1px;
+  font-size: 1.1rem;
   color: #38bdf8;
-  margin-bottom: 2.5rem;
+  text-align: center;
+  margin-bottom: 2rem;
   padding-bottom: 1rem;
   border-bottom: 1px solid #334155;
-  text-align: center;
 }
 
 .nav-btn {
-  padding: 12px 16px;
+  padding: 14px;
   margin-bottom: 8px;
   cursor: pointer;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-  font-weight: 500;
+  border-radius: 12px;
   color: #94a3b8;
-  display: flex;
-  align-items: center;
-}
-
-.nav-btn:hover {
-  background: rgba(255, 255, 255, 0.05);
-  color: white;
+  font-size: 0.9rem;
+  font-weight: 600;
+  -webkit-tap-highlight-color: transparent; /* Fixes grey box on iPhone tap */
 }
 
 .nav-btn.active {
   background: var(--primary-blue);
   color: white;
-  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
 }
 
-/* Main Content Area */
+/* Content Area: Independent Scroll for Safari */
 .content {
-  flex: 1;
-  margin-left: var(--sidebar-width); /* Pushes content away from fixed sidebar */
-  padding: 2.5rem;
-  min-height: 100vh;
-}
-
-header {
-  margin-bottom: 2rem;
+  flex-grow: 1;
+  background-color: var(--bg-slate);
+  padding: 20px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iPhone */
 }
 
 header h1 {
-  font-size: 1.875rem;
-  font-weight: 700;
+  font-size: 1.5rem;
+  font-weight: 800;
   color: var(--dark-navy);
+  margin-bottom: 1rem;
 }
 
-/* Search Bar Styling */
-.search-container {
-  margin-top: 1.5rem;
-}
-
+/* Responsive Search Bar */
 .search-input {
   width: 100%;
-  max-width: 450px;
-  padding: 12px 16px;
-  border: 2px solid var(--border-color);
-  border-radius: 10px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  background: white;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: var(--primary-blue);
-  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
-}
-
-/* Dashboard Cards */
-.card {
-  background: var(--white);
-  padding: 1.5rem;
+  padding: 12px;
+  border: 2px solid #cbd5e1;
   border-radius: 12px;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  margin-bottom: 2rem;
+  font-size: 16px; /* Prevents iPhone "Auto-Zoom" on input focus */
+  appearance: none;
 }
 
-/* Table Design */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-}
-
-th {
-  background-color: #f1f5f9;
-  text-align: left;
-  padding: 12px 16px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  border-bottom: 2px solid var(--border-color);
-}
-
-td {
+/* Card Styling */
+.card {
+  background: white;
+  border-radius: 16px;
   padding: 16px;
-  border-bottom: 1px solid var(--border-color);
-  font-size: 0.95rem;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  overflow-x: auto; /* Handles tables on small screens */
 }
 
-/* Status Badges (Pills) */
+/* Status Pills */
 .pill {
-  padding: 4px 12px;
+  padding: 4px 10px;
   border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: 0.7rem;
+  font-weight: 800;
   color: white;
-  display: inline-block;
+  text-transform: uppercase;
 }
 
-.Observation { background-color: #f59e0b; }
-.Labor { background-color: #ef4444; }
-.Post-Natal { background-color: #22c55e; }
+.Observation { background: #f59e0b; }
+.Labor { background: #ef4444; }
+.Post-Natal { background: #22c55e; }
 
-/* Form Elements */
-.form-group {
-  margin-bottom: 1.25rem;
-}
-
-label {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: var(--text-muted);
-}
-
-input, select, textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  font-size: 1rem;
-}
-
-.submit-btn {
-  background-color: var(--primary-blue);
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-weight: 700;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 1rem;
-}
-
-/* Animations */
-.fade-in {
-  animation: fadeIn 0.4s ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Responsive Overrides */
-@media (max-width: 1024px) {
-  .sidebar { width: 220px; }
-  .content { margin-left: 220px; }
+/* Mobile View Overrides */
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column; /* Stacks sidebar on top of content for phones */
+  }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    padding: 10px;
+  }
+  .sidebar h2 { margin-bottom: 10px; }
+  .content {
+    margin-left: 0;
+    padding: 15px;
+  }
 }
