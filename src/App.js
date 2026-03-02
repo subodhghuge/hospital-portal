@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './appStyles.css';
+import './styles.css';
 import Dashboard from './components/Dashboard';
 import AdmissionForm from './components/AdmissionForm';
 import ClinicalModule from './components/ClinicalModule';
